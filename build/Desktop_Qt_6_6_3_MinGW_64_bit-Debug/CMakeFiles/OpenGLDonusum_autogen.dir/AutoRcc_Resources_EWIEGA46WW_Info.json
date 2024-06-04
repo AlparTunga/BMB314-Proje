@@ -1,0 +1,23 @@
+{
+	"BUILD_DIR" : "C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/build/Desktop_Qt_6_6_3_MinGW_64_bit-Debug/OpenGLDonusum_autogen",
+	"CMAKE_BINARY_DIR" : "C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/build/Desktop_Qt_6_6_3_MinGW_64_bit-Debug",
+	"CMAKE_CURRENT_BINARY_DIR" : "C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/build/Desktop_Qt_6_6_3_MinGW_64_bit-Debug",
+	"CMAKE_CURRENT_SOURCE_DIR" : "C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum",
+	"CMAKE_SOURCE_DIR" : "C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum",
+	"INCLUDE_DIR" : "C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/build/Desktop_Qt_6_6_3_MinGW_64_bit-Debug/OpenGLDonusum_autogen/include",
+	"INPUTS" : 
+	[
+		"C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/simple.frag",
+		"C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/simple.vert"
+	],
+	"LOCK_FILE" : "C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/build/Desktop_Qt_6_6_3_MinGW_64_bit-Debug/CMakeFiles/OpenGLDonusum_autogen.dir/AutoRcc_Resources_EWIEGA46WW_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "--no-zstd", "-name", "Resources" ],
+	"OUTPUT_CHECKSUM" : "EWIEGA46WW",
+	"OUTPUT_NAME" : "qrc_Resources.cpp",
+	"RCC_EXECUTABLE" : "C:/Qt/6.6.3/mingw_64/./bin/rcc.exe",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/build/Desktop_Qt_6_6_3_MinGW_64_bit-Debug/CMakeFiles/OpenGLDonusum_autogen.dir/AutoRcc_Resources_EWIEGA46WW_Used.txt",
+	"SOURCE" : "C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/Resources.qrc",
+	"VERBOSITY" : 0
+}
