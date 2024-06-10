@@ -1,45 +1,58 @@
 #ifndef QOPENGLPANEL_H
 #define QOPENGLPANEL_H
 
-#include <QObject>
+#include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QOpenGLExtraFunctions>
-#include <QtOpenGLWidgets/QOpenGLWidget>
-#include <QtOpenGL/QOpenGLVertexArrayObject>
-#include <QtOpenGL/QOpenGLBuffer>
-#include <QFile>
+#include <QOpenGLShaderProgram>
 #include <QMatrix4x4>
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
 #include <QtMath>
 
 class QOpenGLPanel : public QOpenGLWidget
 {
+    Q_OBJECT
+
 public:
     QOpenGLPanel(QWidget *parent = nullptr);
     ~QOpenGLPanel();
 
-private:
+protected:
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int width, int height) override;
-    const char* readShaderSource(QString filename);
-    QOpenGLFunctions* getGLFunctions();
-    QOpenGLExtraFunctions* getGLExtraFunctions();
+
+private:
+    QOpenGLFunctions *getGLFunctions();
+    QOpenGLExtraFunctions *getGLExtraFunctions();
     bool initializeShaderProgram(QString vertex, QString fragment, QOpenGLFunctions *f);
     bool checkGLError(QOpenGLFunctions *f, QString functionCall);
+    const char* readShaderSource(QString filename);
+    void setupOrthographicProjection(); // Bu satırı ekleyin
 
-    GLuint progID, vertID, fragID;
-    GLuint arrays, triangleData;
-    GLuint position, color;
+    GLuint progID;
+    GLuint vertID;
+    GLuint fragID;
+    GLuint arrays;
+    GLuint triangleData;
+    GLuint position;
+    GLuint color;
+    GLuint translateMatrixID;
+    GLuint rotateMatrixID;
+    GLuint scaleMatrixID;
+    GLuint reflectMatrixID;
 
-    GLuint translateMatrixID, rotateMatrixID, scaleMatrixID, reflectMatrixID;
-    QMatrix4x4 translateMatrix, rotateMatrix, scaleMatrix, reflectMatrix;
+    QMatrix4x4 translateMatrix;
+    QMatrix4x4 rotateMatrix;
+    QMatrix4x4 scaleMatrix;
+    QMatrix4x4 reflectMatrix;
 
-    GLfloat tX, tY, tZ;
+    float tX, tY, tZ;
+    float rX, rY, rZ;
+    float sX, sY, sZ;
     float rDegree;
-    GLfloat rX, rY, rZ;
-    GLfloat sX, sY, sZ;
-    GLfloat reX, reY, reZ;
-
 };
 
 #endif // QOPENGLPANEL_H

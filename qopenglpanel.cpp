@@ -1,13 +1,11 @@
 #include "qopenglpanel.h"
 
-QOpenGLPanel::QOpenGLPanel(QWidget *parent) :QOpenGLWidget(parent)
+QOpenGLPanel::QOpenGLPanel(QWidget *parent) : QOpenGLWidget(parent)
 {
-
 }
 
 QOpenGLPanel::~QOpenGLPanel()
 {
-
 }
 
 QOpenGLFunctions* QOpenGLPanel::getGLFunctions()
@@ -26,13 +24,13 @@ bool QOpenGLPanel::initializeShaderProgram(QString vertex, QString fragment, QOp
 
     vertID = f->glCreateShader(GL_VERTEX_SHADER);
     const char* vertSource = readShaderSource(vertex);
-    f->glShaderSource(vertID,1,&vertSource,nullptr);
+    f->glShaderSource(vertID, 1, &vertSource, nullptr);
     f->glCompileShader(vertID);
     f->glAttachShader(progID, vertID);
 
     fragID = f->glCreateShader(GL_FRAGMENT_SHADER);
     const char* fragSource = readShaderSource(fragment);
-    f->glShaderSource(fragID,1,&fragSource,nullptr);
+    f->glShaderSource(fragID, 1, &fragSource, nullptr);
     f->glCompileShader(fragID);
     f->glAttachShader(progID, fragID);
 
@@ -44,11 +42,11 @@ bool QOpenGLPanel::initializeShaderProgram(QString vertex, QString fragment, QOp
 bool QOpenGLPanel::checkGLError(QOpenGLFunctions *f, QString functionCall)
 {
     GLenum error = f->glGetError();
-    if(error == GL_NO_ERROR){
-        qDebug()<<"No OpenGL Error while "<<functionCall;
+    if (error == GL_NO_ERROR) {
+        qDebug() << "No OpenGL Error while " << functionCall;
         return true;
-    }else{
-        qDebug()<<"Error "<<error<<" while "<<functionCall;
+    } else {
+        qDebug() << "Error " << error << " while " << functionCall;
         return false;
     }
 }
@@ -57,8 +55,8 @@ const char* QOpenGLPanel::readShaderSource(QString filename)
 {
     const char* source = nullptr;
     QFile shaderFile(filename);
-    if(!shaderFile.open(QFile::ReadOnly|QFile::Text)){
-        qDebug()<<"Error while reading shader source file";
+    if (!shaderFile.open(QFile::ReadOnly | QFile::Text)) {
+        qDebug() << "Error while reading shader source file";
         return source;
     }
 
@@ -80,166 +78,200 @@ void QOpenGLPanel::initializeGL()
 
     f->glClearColor(0.0, 1.0, 1.0, 1.0);
 
-    initializeShaderProgram(":simple.vert", ":simple.frag",f);
+    initializeShaderProgram(":simple.vert", ":simple.frag", f);
 
-    translateMatrixID = f->glGetUniformLocation(progID,"translateMatrix");
+    // Setup orthographic projection matrix
+    setupOrthographicProjection();
+
+    translateMatrixID = f->glGetUniformLocation(progID, "translateMatrix");
     rotateMatrixID = f->glGetUniformLocation(progID, "rotateMatrix");
     scaleMatrixID = f->glGetUniformLocation(progID, "scaleMatrix");
     reflectMatrixID = f->glGetUniformLocation(progID, "reflectMatrix");
 
     ef->glGenVertexArrays(2, &arrays);
-    f->glGenBuffers(1,&triangleData);
+    f->glGenBuffers(1, &triangleData);
     ef->glBindVertexArray(arrays);
     f->glBindBuffer(GL_ARRAY_BUFFER, triangleData);
 
     checkGLError(f, "Generating and Binding Vertex Arrays");
 
     float vertAndColors[1024] = {
-                                 //solBİZDENTARAF
-                                 -1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
-                                 -1.0f, -0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 1.0f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-                                 //sağBİZDENTARAF
-                                 -1.0f, 0.3f, 0.0f,0.0f, 0.0f, 1.0f,
-                                 1.0f, -0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-                                 //solBİZDENTARAF2
-                                 -0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 1.0f,
-                                 -0.5f, 0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 0.5f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-                                 //solBİZDENTARAF2_2
-                                 -0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 1.0f,
-                                 -0.5f, 0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 -1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-                                 //sağBİZDENTARAF2
-                                 -0.5f, 0.6f, 0.0f,0.0f, 0.0f, 1.0f,
-                                 0.5f, 0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 0.5f, 0.6f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-                                 //sağBİZDENTARAF2_2
-                                 0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 1.0f,
-                                 0.5f, 0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-                                 //sağyansağARKA
-                                 1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 1.0f, -0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-                                 //sağyansolARKA
-                                 1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 1.0f, -0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
-
-                                 //sağyansağARKA2
-                                 0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 0.5f, 0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 0.5f, 0.6f, 0.0f, 1.0f, 0.0f, 0.0f,
+        //solBİZDENTARAF
+        -1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -1.0f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
 
 
-                                 //solyansağÖN
-                                 -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 -1.0f, 0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 -1.0f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        //sağBİZDENTARAF
+        -1.0f, 0.3f, 0.0f,1.0f, 0.0f, 0.0f,
+        1.0f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
 
-                                 //solyansolÖN
-                                 -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 -1.0f, 0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 -1.0f, -0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        //solBİZDENTARAF2
+        -0.5f, 0.6f, 0.0f,0.0f, 0.0f, 0.0f,
+        -0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f,
 
-                                 //solyansağÖN2
-                                 -0.5f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 -0.5f, 0.6f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 -0.5f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        //solBİZDENTARAF2_2
+        -0.5f, 0.6f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -0.5f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
 
-                                 //solyansolÖN2
-                                 -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 -0.5f, 0.6f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 -0.5f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        //solBİZDENTARAF2_25
+        -0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
 
-                                 //zekssol
-                                 -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 -1.0f, -0.3f, -0.7f, 0.0f, 1.0f, 0.0f,
-                                 1.0f, -0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
 
-                                 //zekssağ
-                                 -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 1.0f, -0.3f, -0.7f, 0.0f, 1.0f, 0.0f,
-                                 1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        //sağBİZDENTARAF2
+        -0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
 
-                                 //zekssol2
-                                 -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 -0.5f, 0.3f, -0.7f, 0.0f, 1.0f, 0.0f,
-                                 0.5f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        //sağBİZDENTARAF2_2
+        0.5f, 0.6f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.5f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
 
-                                 //zekssol2_2
-                                 -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 -0.5f, 0.3f, -0.7f, 0.0f, 1.0f, 0.0f,
-                                 -1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        //sağBİZDENTARAF2_25
+        -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
+        -1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
 
-                                 //zekssağ2
-                                 -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 0.5f, 0.3f, -0.7f, 0.0f, 1.0f, 0.0f,
-                                 0.5f, 0.6f, -0.7f, 1.0f, 0.0f, 0.0f,
+        //sağyansağARKA
+        1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
+        1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
 
-                                 //zekssağ2_2
-                                 0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 0.5f, 0.3f, -0.7f, 0.0f, 1.0f, 0.0f,
-                                 1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        //sağyansolARKA
+        1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
+        1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
 
-                                 //ustkare
-                                 -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 -1.0f, 0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
 
-                                 -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 1.0f, 0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        //solyansağÖN
+        -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
+        -1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
 
-                                 //ustkare2
-                                 -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 -0.5f, 0.6f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 0.5f, 0.6f, 0.0f, 1.0f, 0.0f, 0.0f,
+        //solyansolÖN
+        -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
+        -1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
 
-                                 -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 0.5f, 0.6f, 0.0f, 0.0f, 1.0f, 0.0f,
-                                 0.5f, 0.6f, -0.7f, 1.0f, 0.0f, 0.0f,
+        //zekssol
+        -1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        -1.0f, -0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        1.0f, -0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
 
-                                 //altkare
-                                 -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 -1.0f, -0.3f, 0.0f, 0.0f,1.0f, 0.0f,
-                                 1.0f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        //zekssağ
+        -1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        1.0f, -0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
 
-                                 -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-                                 1.0f, -0.3f, 0.0f,0.0f, 1.0f, 0.0f,
-                                 1.0f, -0.3f, -0.7f, 1.0f, 0.0f, 0.0f
+        //zekssağ2
+        -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+
+        //zekssağ2_2
+        0.5f, 0.6f, -0.7f, 1.0f, 0.0f, 0.0f,
+        0.5f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+
+        //zekssağ2_25
+        1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
+        1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+        //zekssol2
+        -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
+
+        //zekssol2_2
+        -0.5f, 0.6f, -0.7f, 1.0f, 0.0f, 0.0f,
+        -0.5f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        -1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+
+        //zekssol2_25
+        0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+        1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
+
+        //ustkare
+        -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
+        -1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+
+        -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
+
+        //ustkare2
+        -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+        -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+
+        //altkare
+        -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
+        -1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+
+        -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
+        1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     };
 
-
-
     f->glBufferData(GL_ARRAY_BUFFER, sizeof(vertAndColors), vertAndColors, GL_STATIC_DRAW);
 
     position = f->glGetAttribLocation(progID, "position");
-    f->glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*)0);
+    f->glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)0);
     f->glEnableVertexAttribArray(position);
 
     color = f->glGetAttribLocation(progID, "color");
-    f->glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*)(sizeof(float)*3));
+    f->glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3));
     f->glEnableVertexAttribArray(color);
 
-
-    tX = 0.0f, tY=0.0f, tZ=0.0f;
-    rX = 1.0f, rY=1.0f, rZ=0.0f;
-    sX = 0.5f, sY=0.5f, sZ=-1.0f;
-    reX = -1.0f, reY = 1.0F, reZ = 1.0f;
+    tX = 0.0f, tY = 0.0f, tZ = 0.0f;
+    rX = 0.0f, rY = 0.3f, rZ = 0.0f;
+    sX = 0.5f, sY = 0.5f, sZ = 0.5f;
     rDegree = 0.0f;
+}
 
+void QOpenGLPanel::setupOrthographicProjection()
+{
+    QOpenGLFunctions *f = getGLFunctions();
+
+    // Set up orthographic projection matrix
+    QMatrix4x4 orthoMatrix;
+    orthoMatrix.setToIdentity();
+    orthoMatrix.ortho(-2.0f, 2.0f, -2.0f, 2.0f, -1.0f, 1.0f);
+
+    // Get the location of the projection matrix in the shader program
+    GLint projMatrixID = f->glGetUniformLocation(progID, "projMatrix");
+
+    // Pass the orthographic projection matrix to the shader
+    f->glUseProgram(progID);
+    f->glUniformMatrix4fv(projMatrixID, 1, GL_FALSE, orthoMatrix.constData());
 }
 
 void QOpenGLPanel::paintGL()
@@ -248,63 +280,26 @@ void QOpenGLPanel::paintGL()
     QOpenGLExtraFunctions *ef = getGLExtraFunctions();
     f->glClear(GL_COLOR_BUFFER_BIT);
 
-
     translateMatrix.setToIdentity();
-    //     1.0, 0.0, 0.0, 0.0
-    //     0.0, 1.0, 0.0, 0.0
-    //     0.0, 0.0, 1.0, 0.0
-    //     0.0, 0.0, 0.0, 1.0
-    tX+=0.000;
-    tY+=0.000;
-    tZ+=0.000;
-    // translateMatrix(0,3)=tX;
-    // translateMatrix(1,3)=tY;
-    // translateMatrix(2,3)=tZ;
-    translateMatrix.translate(tX,tY,tZ);
+    tX = 0.0f * qCos(qDegreesToRadians(rDegree));
+    tZ = 0.0f * qSin(qDegreesToRadians(rDegree));
+    translateMatrix.translate(tX, tY, tZ);
 
     rotateMatrix.setToIdentity();
-    rDegree+=0.3f;
-    float radian = qDegreesToRadians(rDegree);
-    // //rotate X axis
-    // rotateMatrix(1,1)=qCos(radian);
-    // rotateMatrix(1,2)=-qSin(radian);
-    // rotateMatrix(2,1)=qSin(radian);
-    // rotateMatrix(2,2)=qCos(radian);
-    // //rotate Y axis
-    // rotateMatrix(0,0)=qCos(radian);
-    // rotateMatrix(0,2)=-qSin(radian);
-    // rotateMatrix(2,0)=qSin(radian);
-    // rotateMatrix(2,2)=qCos(radian);
-    // //rotate Z axis
-    // rotateMatrix(0,0)=qCos(radian);
-    // rotateMatrix(0,1)=-qSin(radian);
-    // rotateMatrix(1,0)=qSin(radian);
-    // rotateMatrix(1,1)=qCos(radian);
+    rDegree += 0.3f;
     rotateMatrix.rotate(rDegree, rX, rY, rZ);
 
-
     scaleMatrix.setToIdentity();
-        // sX+=0.01f, sY+=0.01f, sZ+=0.01f;
-        // scaleMatrix(0,0) = sX;
-        // scaleMatrix(1,1)= sY;
-        // scaleMatrix(2,2) = sZ;
-        // scaleMatrix.scale(sX,sY,sZ);
-
+    scaleMatrix.scale(sX, sY, sZ);
 
     reflectMatrix.setToIdentity();
-    //     1.0, 0.0, 0.0, 0.0
-    //     0.0, 1.0, 0.0, 0.0
-    //     0.0, 0.0, 1.0, 0.0
-    //     0.0, 0.0, 0.0, 1.0
-    // reflectMatrix(0,0)=-1.0f;
-
 
     f->glUseProgram(progID);
 
-    f->glUniformMatrix4fv(translateMatrixID,1,GL_FALSE,translateMatrix.constData());
-    f->glUniformMatrix4fv(rotateMatrixID,1,GL_FALSE,rotateMatrix.constData());
-    f->glUniformMatrix4fv(scaleMatrixID,1,GL_FALSE,scaleMatrix.constData());
-    f->glUniformMatrix4fv(reflectMatrixID,1,GL_FALSE,reflectMatrix.constData());
+    f->glUniformMatrix4fv(translateMatrixID, 1, GL_FALSE, translateMatrix.constData());
+    f->glUniformMatrix4fv(rotateMatrixID, 1, GL_FALSE, rotateMatrix.constData());
+    f->glUniformMatrix4fv(scaleMatrixID, 1, GL_FALSE, scaleMatrix.constData());
+    f->glUniformMatrix4fv(reflectMatrixID, 1, GL_FALSE, reflectMatrix.constData());
 
     ef->glBindVertexArray(arrays);
     f->glDrawArrays(GL_TRIANGLES, 0, 128);
@@ -314,8 +309,5 @@ void QOpenGLPanel::paintGL()
 
 void QOpenGLPanel::resizeGL(int width, int height)
 {
-
-
+    // Handle window resizing if needed
 }
-
-

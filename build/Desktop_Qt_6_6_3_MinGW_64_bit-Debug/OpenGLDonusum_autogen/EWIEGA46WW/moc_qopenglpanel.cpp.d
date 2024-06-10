@@ -1,4 +1,4 @@
-C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/build/Desktop_Qt_6_6_3_MinGW_64_bit-Debug/OpenGLDonusum_autogen/EWIEGA46WW/moc_mainwindow.cpp: C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/mainwindow.h \
+C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/build/Desktop_Qt_6_6_3_MinGW_64_bit-Debug/OpenGLDonusum_autogen/EWIEGA46WW/moc_qopenglpanel.cpp: C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/qopenglpanel.h \
   C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/build/Desktop_Qt_6_6_3_MinGW_64_bit-Debug/OpenGLDonusum_autogen/moc_predefs.h \
   C:/Qt/6.6.3/mingw_64/include/QtCore/QDebug \
   C:/Qt/6.6.3/mingw_64/include/QtCore/QFile \
@@ -173,16 +173,12 @@ C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/build/Desktop_Qt_6_6_3_MinGW_64_bit-
   C:/Qt/6.6.3/mingw_64/include/QtOpenGLWidgets/qopenglwidget.h \
   C:/Qt/6.6.3/mingw_64/include/QtOpenGLWidgets/qtopenglwidgetsexports.h \
   C:/Qt/6.6.3/mingw_64/include/QtOpenGLWidgets/qtopenglwidgetsglobal.h \
-  C:/Qt/6.6.3/mingw_64/include/QtWidgets/QMainWindow \
   C:/Qt/6.6.3/mingw_64/include/QtWidgets/QWidget \
-  C:/Qt/6.6.3/mingw_64/include/QtWidgets/qmainwindow.h \
   C:/Qt/6.6.3/mingw_64/include/QtWidgets/qsizepolicy.h \
-  C:/Qt/6.6.3/mingw_64/include/QtWidgets/qtabwidget.h \
   C:/Qt/6.6.3/mingw_64/include/QtWidgets/qtwidgets-config.h \
   C:/Qt/6.6.3/mingw_64/include/QtWidgets/qtwidgetsexports.h \
   C:/Qt/6.6.3/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
   C:/Qt/6.6.3/mingw_64/include/QtWidgets/qwidget.h \
-  C:/Qt/Examples/Qt-6.6.3/demos/OpenGLDonusum/qopenglpanel.h \
   C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed/limits.h \
   C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed/syslimits.h \
   C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/adxintrin.h \
