@@ -25,6 +25,8 @@ protected:
     void resizeGL(int width, int height) override;
 
 private:
+
+
     QOpenGLFunctions *getGLFunctions();
     QOpenGLExtraFunctions *getGLExtraFunctions();
     bool initializeShaderProgram(QString vertex, QString fragment, QOpenGLFunctions *f);
@@ -53,6 +55,8 @@ private:
     float rX, rY, rZ;
     float sX, sY, sZ;
     float rDegree;
+    QVector3D ambientColor;
+
 };
 
 #endif // QOPENGLPANEL_H

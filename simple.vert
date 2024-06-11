@@ -7,8 +7,10 @@ uniform mat4 rotateMatrix;
 uniform mat4 scaleMatrix;
 uniform mat4 reflectMatrix;
 out vec3 outColor;
+uniform vec3 ambientColor; // Ambiyans ışık rengi uniform'u
 
 void main() {
    gl_Position = translateMatrix * rotateMatrix * scaleMatrix * reflectMatrix *  vec4(position, 1.0);
    outColor = color;
+   outColor = color * ambientColor; // Renk değerine ambiyans ışığını uygula
 }

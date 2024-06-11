@@ -75,13 +75,17 @@ void QOpenGLPanel::initializeGL()
     f->initializeOpenGLFunctions();
     QOpenGLExtraFunctions *ef = getGLExtraFunctions();
     ef->initializeOpenGLFunctions();
-
+    f->glEnable(GL_DEPTH_TEST);
     f->glClearColor(0.0, 1.0, 1.0, 1.0);
+    f->glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+    ambientColor = QVector3D(0.8f, 0.8f, 0.8f); // Örnek olarak gri bir ambiyans ışığı
 
     initializeShaderProgram(":simple.vert", ":simple.frag", f);
 
     // Setup orthographic projection matrix
     setupOrthographicProjection();
+
 
     translateMatrixID = f->glGetUniformLocation(progID, "translateMatrix");
     rotateMatrixID = f->glGetUniformLocation(progID, "rotateMatrix");
@@ -108,35 +112,35 @@ void QOpenGLPanel::initializeGL()
         1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
 
         //solBİZDENTARAF2
-        -0.5f, 0.6f, 0.0f,0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, 0.0f,0.0f, 0.0f, 0.0f,
         -0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f,
 
         //solBİZDENTARAF2_2
-        -0.5f, 0.6f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, 0.0f, 1.0f, 0.0f, 0.0f,
         -0.5f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
         -1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
 
         //solBİZDENTARAF2_25
-        -0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
         -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
-        -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, -0.7f, 0.0f, 0.0f, 0.0f,
 
 
         //sağBİZDENTARAF2
-        -0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
 
         //sağBİZDENTARAF2_2
-        0.5f, 0.6f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, 0.0f, 1.0f, 0.0f, 0.0f,
         0.5f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
         1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
 
         //sağBİZDENTARAF2_25
         -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
         -1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f,
-        -0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
 
         //sağyansağARKA
         1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
@@ -170,33 +174,33 @@ void QOpenGLPanel::initializeGL()
         1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
 
         //zekssağ2
-        -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, -0.7f, 0.0f, 0.0f, 0.0f,
         0.5f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
-        0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, -0.7f, 0.0f, 0.0f, 0.0f,
 
         //zekssağ2_2
-        0.5f, 0.6f, -0.7f, 1.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, -0.7f, 1.0f, 0.0f, 0.0f,
         0.5f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
         1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
 
         //zekssağ2_25
         1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
         1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
 
         //zekssol2
-        -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, -0.7f, 0.0f, 0.0f, 0.0f,
         -0.5f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
         0.5f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
 
         //zekssol2_2
-        -0.5f, 0.6f, -0.7f, 1.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, -0.7f, 1.0f, 0.0f, 0.0f,
         -0.5f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
         -1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
 
         //zekssol2_25
-        0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, -0.7f, 0.0f, 0.0f, 0.0f,
         1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 0.0f,
 
         //ustkare
@@ -209,13 +213,13 @@ void QOpenGLPanel::initializeGL()
         1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
 
         //ustkare2
-        -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
-        -0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, -0.7f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
 
-        -0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
-        0.5f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.5f, 0.6f, -0.7f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, -0.7f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, -0.7f, 0.0f, 0.0f, 0.0f,
 
         //altkare
         -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
@@ -225,19 +229,6 @@ void QOpenGLPanel::initializeGL()
         -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
         1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
         1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     };
 
@@ -252,9 +243,10 @@ void QOpenGLPanel::initializeGL()
     f->glEnableVertexAttribArray(color);
 
     tX = 0.0f, tY = 0.0f, tZ = 0.0f;
-    rX = 0.0f, rY = 0.3f, rZ = 0.0f;
+    rX = 0.0f, rY = 0.1f, rZ = 0.0f;
     sX = 0.5f, sY = 0.5f, sZ = 0.5f;
     rDegree = 0.0f;
+
 }
 
 void QOpenGLPanel::setupOrthographicProjection()
@@ -279,14 +271,15 @@ void QOpenGLPanel::paintGL()
     QOpenGLFunctions *f = getGLFunctions();
     QOpenGLExtraFunctions *ef = getGLExtraFunctions();
     f->glClear(GL_COLOR_BUFFER_BIT);
-
+    GLint ambientColorLoc = f->glGetUniformLocation(progID, "ambientColor");
+    f->glUniform3f(ambientColorLoc, ambientColor.x(), ambientColor.y(), ambientColor.z());
     translateMatrix.setToIdentity();
-    tX = 0.0f * qCos(qDegreesToRadians(rDegree));
+    tX = 0.5f * qCos(qDegreesToRadians(rDegree));
     tZ = 0.0f * qSin(qDegreesToRadians(rDegree));
     translateMatrix.translate(tX, tY, tZ);
 
     rotateMatrix.setToIdentity();
-    rDegree += 0.3f;
+    rDegree += 0.09f;
     rotateMatrix.rotate(rDegree, rX, rY, rZ);
 
     scaleMatrix.setToIdentity();
