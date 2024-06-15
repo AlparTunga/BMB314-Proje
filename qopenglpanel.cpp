@@ -2,6 +2,41 @@
 
 QOpenGLPanel::QOpenGLPanel(QWidget *parent) : QOpenGLWidget(parent)
 {
+    resetScene();
+}
+
+void QOpenGLPanel::resetScene()
+{
+    translateMatrix.setToIdentity();
+    rotateMatrix.setToIdentity();
+    scaleMatrix.setToIdentity();
+
+
+
+    tX = 0.0f, tY=0.0f, tZ=0.0f;
+    rDegree = 0.0f, rX = 1.0f, rY=1.0f, rZ=1.0f;
+    sX = 1.0f, sY=1.0f, sZ=1.0f;
+
+
+    cameraMatrix.setToIdentity();
+    camEyeX = 0.0f, camEyeY= 1.5f, camEyeZ = 1.5f;
+    cameraEye = QVector3D(camEyeX, camEyeY, camEyeZ);
+    camCenterX = 0.0f, camCenterY = 0.0f, camCenterZ = 0.0f;
+    cameraCenter = QVector3D(camCenterX, camCenterY, camCenterZ);
+    camUpX = 0.0f, camUpY = 1.0f, camUpZ = 0.0f;
+    cameraUp = QVector3D(camUpX, camUpY, camUpZ);
+    cameraMatrix.lookAt(cameraEye, cameraCenter, cameraUp);
+
+    projectionMatrix.setToIdentity();
+    verticalAngle = 90.0f;
+    aspectRatio = float(this->width())/float(this->width());
+    nearPlane = 1.0f;
+    farPlane = 100.0f;
+    projectionMatrix.perspective(verticalAngle, aspectRatio, nearPlane, farPlane);
+}
+void QOpenGLPanel::mousePressEvent(QMouseEvent* event)
+{
+    this->resetScene();
 }
 
 QOpenGLPanel::~QOpenGLPanel()
@@ -84,13 +119,15 @@ void QOpenGLPanel::initializeGL()
     initializeShaderProgram(":simple.vert", ":simple.frag", f);
 
     // Setup orthographic projection matrix
-    setupOrthographicProjection();
+    //setupOrthographicProjection();
 
 
     translateMatrixID = f->glGetUniformLocation(progID, "translateMatrix");
     rotateMatrixID = f->glGetUniformLocation(progID, "rotateMatrix");
     scaleMatrixID = f->glGetUniformLocation(progID, "scaleMatrix");
     reflectMatrixID = f->glGetUniformLocation(progID, "reflectMatrix");
+    cameraMatrixID = f->glGetUniformLocation(progID, "cameraMatrix");
+    projectionMatrixID = f->glGetUniformLocation(progID, "projectionMatrix");
 
     ef->glGenVertexArrays(2, &arrays);
     f->glGenBuffers(1, &triangleData);
@@ -143,25 +180,25 @@ void QOpenGLPanel::initializeGL()
         -0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
 
         //sağyansağARKA
-        1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-        1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
-        1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        1.0f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
 
         //sağyansolARKA
-        1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-        1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
-        1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
+        1.0f, -0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        1.0f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
 
 
         //solyansağÖN
-        -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-        -1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
-        -1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -1.0f, -0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        -1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -1.0f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
 
         //solyansolÖN
-        -1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-        -1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
-        -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
+        -1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
+        -1.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -1.0f, -0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
 
         //zekssol
         -1.0f, 0.3f, -0.7f, 1.0f, 0.0f, 0.0f,
@@ -213,13 +250,13 @@ void QOpenGLPanel::initializeGL()
         1.0f, 0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
 
         //ustkare2
-        -0.5f, 0.9f, -0.7f, 0.0f, 0.0f, 0.0f,
-        -0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, -0.7f, 1.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, 0.0f, 1.0f, 0.0f, 0.0f,
 
-        -0.5f, 0.9f, -0.7f, 0.0f, 0.0f, 0.0f,
-        0.5f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.5f, 0.9f, -0.7f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.9f, -0.7f, 1.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.5f, 0.9f, -0.7f, 1.0f, 0.0f, 0.0f,
 
         //altkare
         -1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
@@ -230,9 +267,14 @@ void QOpenGLPanel::initializeGL()
         1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
         1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f
 
+
+
+
     };
 
+
     f->glBufferData(GL_ARRAY_BUFFER, sizeof(vertAndColors), vertAndColors, GL_STATIC_DRAW);
+
 
     position = f->glGetAttribLocation(progID, "position");
     f->glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)0);
@@ -243,27 +285,29 @@ void QOpenGLPanel::initializeGL()
     f->glEnableVertexAttribArray(color);
 
     tX = 0.0f, tY = 0.0f, tZ = 0.0f;
-    rX = 0.0f, rY = 0.1f, rZ = 0.0f;
+    rX = 0.0f, rY = 0.2f, rZ = 0.0f;
     sX = 0.5f, sY = 0.5f, sZ = 0.5f;
     rDegree = 0.0f;
 
 }
 
-void QOpenGLPanel::setupOrthographicProjection()
+void QOpenGLPanel::lookAt( float ex,  float ey,  float ez,  float cx,  float cy,  float cz, float ux,  float uy, float uz)
 {
-    QOpenGLFunctions *f = getGLFunctions();
+    camEyeX = ex, camEyeY= ey, camEyeZ = ez;
+    cameraEye = QVector3D(camEyeX, camEyeY, camEyeZ);
+    camCenterX = cx, camCenterY = cy, camCenterZ = cz;
+    cameraCenter = QVector3D(camCenterX, camCenterY, camCenterZ);
+    camUpX = ux, camUpY = uy, camUpZ = uz;
+    cameraUp = QVector3D(camUpX, camUpY, camUpZ);
+    cameraMatrix.lookAt(cameraEye, cameraCenter, cameraUp);
+}
 
-    // Set up orthographic projection matrix
-    QMatrix4x4 orthoMatrix;
-    orthoMatrix.setToIdentity();
-    orthoMatrix.ortho(-2.0f, 2.0f, -2.0f, 2.0f, -1.0f, 1.0f);
-
-    // Get the location of the projection matrix in the shader program
-    GLint projMatrixID = f->glGetUniformLocation(progID, "projMatrix");
-
-    // Pass the orthographic projection matrix to the shader
-    f->glUseProgram(progID);
-    f->glUniformMatrix4fv(projMatrixID, 1, GL_FALSE, orthoMatrix.constData());
+void QOpenGLPanel::perspective( float angle,  float ratio,  float nearp,  float farp)
+{
+    verticalAngle = angle;
+    aspectRatio = ratio;
+    nearPlane = nearp, farPlane = farp;
+    projectionMatrix.perspective(verticalAngle, aspectRatio, nearPlane, farPlane);
 }
 
 void QOpenGLPanel::paintGL()
@@ -293,9 +337,11 @@ void QOpenGLPanel::paintGL()
     f->glUniformMatrix4fv(rotateMatrixID, 1, GL_FALSE, rotateMatrix.constData());
     f->glUniformMatrix4fv(scaleMatrixID, 1, GL_FALSE, scaleMatrix.constData());
     f->glUniformMatrix4fv(reflectMatrixID, 1, GL_FALSE, reflectMatrix.constData());
+    f->glUniformMatrix4fv(cameraMatrixID,1,GL_FALSE,cameraMatrix.constData());
+    f->glUniformMatrix4fv(projectionMatrixID,1,GL_FALSE,projectionMatrix.constData());
 
     ef->glBindVertexArray(arrays);
-    f->glDrawArrays(GL_TRIANGLES, 0, 128);
+    f->glDrawArrays(GL_TRIANGLES, 0, 10028);
 
     update();
 }
