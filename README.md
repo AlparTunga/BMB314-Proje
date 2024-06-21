@@ -1,1 +1,1 @@
-Modern OPENGL ile yapılmış bir araba animasyonu.
+Modern OPENGL ile yapılmış bir araba çizimi ve teker animasyonu.
