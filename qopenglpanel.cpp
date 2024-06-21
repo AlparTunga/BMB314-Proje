@@ -36,7 +36,7 @@ void QOpenGLPanel::resetScene()
 }
 void QOpenGLPanel::mousePressEvent(QMouseEvent* event)
 {
-    this->resetScene();
+    //this->resetScene();
 }
 
 QOpenGLPanel::~QOpenGLPanel()
@@ -114,12 +114,12 @@ void QOpenGLPanel::initializeGL()
     f->glClearColor(0.0, 1.0, 1.0, 1.0);
     f->glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-    ambientColor = QVector3D(0.8f, 0.8f, 0.8f); // Örnek olarak gri bir ambiyans ışığı
+    ambientColor = QVector3D(0.9f, 0.9f, 0.9f); //  beyaz ve gri arası bir ambiyans ışığı
 
     initializeShaderProgram(":simple.vert", ":simple.frag", f);
 
     // Setup orthographic projection matrix
-    //setupOrthographicProjection();
+    // setupOrthographicProjection();
 
 
     translateMatrixID = f->glGetUniformLocation(progID, "translateMatrix");
@@ -129,14 +129,13 @@ void QOpenGLPanel::initializeGL()
     cameraMatrixID = f->glGetUniformLocation(progID, "cameraMatrix");
     projectionMatrixID = f->glGetUniformLocation(progID, "projectionMatrix");
 
-    ef->glGenVertexArrays(2, &arrays);
-    f->glGenBuffers(1, &triangleData);
-    ef->glBindVertexArray(arrays);
-    f->glBindBuffer(GL_ARRAY_BUFFER, triangleData);
+    ef->glGenVertexArrays(2, &arrays[0]);
+    f->glGenBuffers(2, &triangleData[0]);
+    ef->glBindVertexArray(arrays[0]);
+    f->glBindBuffer(GL_ARRAY_BUFFER, triangleData[0]);
 
     checkGLError(f, "Generating and Binding Vertex Arrays");
-
-    float vertAndColors[10024] = {
+    float vertAndColor[10024] = {
         //solBİZDENTARAF
         -2.5f, 0.6f, 0.0f, 1.0f, 0.0f, 0.0f,
         -2.5f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -266,19 +265,19 @@ void QOpenGLPanel::initializeGL()
         -2.5f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
         1.0f, -0.3f, 0.0f, 0.0f, 0.0f, 1.0f,
         1.0f, -0.3f, -0.7f, 0.0f, 0.0f, 1.0f,
-
-
+    };
+    float vertAndColors[10024] = {
 
         /////////////////////////////////////////////////////////////////
-        0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,0.0f,
+        0.4f, 0.0f, 0.0f, 0.0f,0.0f, 0.0f,
         0.384f, -0.1117f, 0.0f, 0.0f, 0.0f, 0.0f,
 
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.384f, -0.1117f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.3375f, -0.2146f, 0.0f, 0.0f, 0.0f, 0.0f,
 
-        0.3375f, -0.2146f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.3375f, -0.2146f, 0.0f, 0.0f,0.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.2641f, -0.3003f, 0.0f, 0.0f, 0.0f, 0.0f,
 
@@ -364,97 +363,120 @@ void QOpenGLPanel::initializeGL()
 
 
         //////////////////////////////////////////////ikinci daire/
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.4f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.384f, -0.1117f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 1
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.4f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.384f, -0.1117f, 0.2f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 2
         0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
         0.384f, -0.1117f, 0.2f, 0.0f, 0.0f, 0.0f,
         0.3375f, -0.2146f, 0.2f, 0.0f, 0.0f, 0.0f,
 
-        0.3375f, -0.2146f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.2641f, -0.3003f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 3
+        0.3375f, -0.2146f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.2641f, -0.3003f, 0.2f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 4
         0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
         0.2641f, -0.3003f, 0.2f, 0.0f, 0.0f, 0.0f,
         0.1696f, -0.3622f, 0.2f, 0.0f, 0.0f, 0.0f,
 
-        0.1696f, -0.3622f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0617f, -0.3952f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 5
+        0.1696f, -0.3622f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0617f, -0.3952f, 0.2f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 6
         0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
         0.0617f, -0.3952f, 0.2f, 0.0f, 0.0f, 0.0f,
         -0.0511f, -0.3967f, 0.2f, 0.0f, 0.0f, 0.0f,
 
-        -0.0511f, -0.3967f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        -0.1599f, -0.3666f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 7
+        -0.0511f, -0.3967f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        -0.1599f, -0.3666f, 0.2f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 8
         0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
         -0.1599f, -0.3666f, 0.2f, 0.0f, 0.0f, 0.0f,
         -0.256f, -0.3073f, 0.2f, 0.0f, 0.0f, 0.0f,
 
-        -0.256f, -0.3073f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        -0.3317f, -0.2235f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 9
+        -0.256f, -0.3073f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        -0.3317f, -0.2235f, 0.2f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 10
         0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
         -0.3317f, -0.2235f, 0.2f, 0.0f, 0.0f, 0.0f,
         -0.3809f, -0.1219f, 0.2f, 0.0f, 0.0f, 0.0f,
 
-        -0.3809f, -0.1219f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        -0.3998f, -0.0106f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 11
+        -0.3809f, -0.1219f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        -0.3998f, -0.0106f, 0.2f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 12
         0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
         -0.3998f, -0.0106f, 0.2f, 0.0f, 0.0f, 0.0f,
         -0.3869f, 0.1015f, 0.2f, 0.0f, 0.0f, 0.0f,
 
-        -0.3869f, 0.1015f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        -0.3431f, 0.2055f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 13
+        -0.3869f, 0.1015f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        -0.3431f, 0.2055f, 0.2f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 14
         0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
         -0.3431f, 0.2055f, 0.2f, 0.0f, 0.0f, 0.0f,
         -0.272f, 0.2932f, 0.2f, 0.0f, 0.0f, 0.0f,
 
-        -0.272f, 0.2932f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        -0.1792f, 0.3575f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 15
+        -0.272f, 0.2932f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        -0.1792f, 0.3575f, 0.2f, 1.0f, 1.0f, 1.0f,
 
-        0.0f, 0.0f,0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 16
+        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
         -0.1792f, 0.3575f, 0.2f, 0.0f, 0.0f, 0.0f,
         -0.0721f, 0.3934f, 0.2f, 0.0f, 0.0f, 0.0f,
 
-        -0.0721f, 0.3934f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0406f, 0.3979f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 17
+        -0.0721f, 0.3934f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0406f, 0.3979f, 0.2f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 18
         0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
         0.0406f, 0.3979f, 0.2f, 0.0f, 0.0f, 0.0f,
         0.1502f, 0.3707f, 0.2f, 0.0f, 0.0f, 0.0f,
 
-        0.1502f, 0.3707f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.2478f, 0.3139f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 19
+        0.1502f, 0.3707f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.2478f, 0.3139f, 0.2f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 20
         0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
         0.2478f, 0.3139f, 0.2f, 0.0f, 0.0f, 0.0f,
         0.3256f, 0.2322f, 0.2f, 0.0f, 0.0f, 0.0f,
 
-        0.3256f, 0.2322f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.3775f, 0.1319f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 21
+        0.3256f, 0.2322f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.3775f, 0.1319f, 0.2f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 22
         0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
         0.3775f, 0.1319f, 0.2f, 0.0f, 0.0f, 0.0f,
         0.3994f, 0.0212f, 0.2f, 0.0f, 0.0f, 0.0f,
 
-        0.3994f, 0.0212f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
-        0.4f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f,
+        // Triangle 23
+        0.3994f, 0.0212f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
+        0.4f, 0.0f, 0.2f, 1.0f, 1.0f, 1.0f,
 
 
 
@@ -620,9 +642,6 @@ void QOpenGLPanel::initializeGL()
         0.3994f, 0.0212f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.3994f, 0.0212f, 0.2f, 0.0f, 0.0f, 0.0f,
-
-
-
         ///////////////////////////////////////////////////////////////
         0.0f, 0.0f, -0.7f, 0.0f, 0.0f, 0.0f,
         0.4f, 0.0f, -0.7f, 0.0f, 0.0f, 0.0f,
@@ -718,97 +737,120 @@ void QOpenGLPanel::initializeGL()
 
 
         //////////////////////////////////////////////ikinci daire/
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.4f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.384f, -0.1117f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 1
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.4f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.384f, -0.1117f, -0.9f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 2
         0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
         0.384f, -0.1117f, -0.9f, 0.0f, 0.0f, 0.0f,
         0.3375f, -0.2146f, -0.9f, 0.0f, 0.0f, 0.0f,
 
-        0.3375f, -0.2146f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.2641f, -0.3003f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 3
+        0.3375f, -0.2146f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.2641f, -0.3003f, -0.9f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 4
         0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
         0.2641f, -0.3003f, -0.9f, 0.0f, 0.0f, 0.0f,
         0.1696f, -0.3622f, -0.9f, 0.0f, 0.0f, 0.0f,
 
-        0.1696f, -0.3622f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0617f, -0.3952f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 5
+        0.1696f, -0.3622f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0617f, -0.3952f, -0.9f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 6
         0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
         0.0617f, -0.3952f, -0.9f, 0.0f, 0.0f, 0.0f,
         -0.0511f, -0.3967f, -0.9f, 0.0f, 0.0f, 0.0f,
 
-        -0.0511f, -0.3967f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        -0.1599f, -0.3666f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 7
+        -0.0511f, -0.3967f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        -0.1599f, -0.3666f, -0.9f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 8
         0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
         -0.1599f, -0.3666f, -0.9f, 0.0f, 0.0f, 0.0f,
         -0.256f, -0.3073f, -0.9f, 0.0f, 0.0f, 0.0f,
 
-        -0.256f, -0.3073f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        -0.3317f, -0.2235f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 9
+        -0.256f, -0.3073f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        -0.3317f, -0.2235f, -0.9f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 10
         0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
         -0.3317f, -0.2235f, -0.9f, 0.0f, 0.0f, 0.0f,
         -0.3809f, -0.1219f, -0.9f, 0.0f, 0.0f, 0.0f,
 
-        -0.3809f, -0.1219f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        -0.3998f, -0.0106f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 11
+        -0.3809f, -0.1219f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        -0.3998f, -0.0106f, -0.9f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 12
         0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
         -0.3998f, -0.0106f, -0.9f, 0.0f, 0.0f, 0.0f,
         -0.3869f, 0.1015f, -0.9f, 0.0f, 0.0f, 0.0f,
 
-        -0.3869f, 0.1015f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        -0.3431f, 0.2055f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 13
+        -0.3869f, 0.1015f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        -0.3431f, 0.2055f, -0.9f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 14
         0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
         -0.3431f, 0.2055f, -0.9f, 0.0f, 0.0f, 0.0f,
         -0.272f, 0.2932f, -0.9f, 0.0f, 0.0f, 0.0f,
 
-        -0.272f, 0.2932f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        -0.1792f, 0.3575f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 15
+        -0.272f, 0.2932f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        -0.1792f, 0.3575f, -0.9f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 16
         0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
         -0.1792f, 0.3575f, -0.9f, 0.0f, 0.0f, 0.0f,
         -0.0721f, 0.3934f, -0.9f, 0.0f, 0.0f, 0.0f,
 
-        -0.0721f, 0.3934f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0406f, 0.3979f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 18
+        -0.0721f, 0.3934f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0406f, 0.3979f, -0.9f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 19
         0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
         0.0406f, 0.3979f, -0.9f, 0.0f, 0.0f, 0.0f,
         0.1502f, 0.3707f, -0.9f, 0.0f, 0.0f, 0.0f,
 
-        0.1502f, 0.3707f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.2478f, 0.3139f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 20
+        0.1502f, 0.3707f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.2478f, 0.3139f, -0.9f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 21
         0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
         0.2478f, 0.3139f, -0.9f, 0.0f, 0.0f, 0.0f,
         0.3256f, 0.2322f, -0.9f, 0.0f, 0.0f, 0.0f,
 
-        0.3256f, 0.2322f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.3775f, 0.1319f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 22
+        0.3256f, 0.2322f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.3775f, 0.1319f, -0.9f, 1.0f, 1.0f, 1.0f,
 
+        // Triangle 23
         0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
         0.3775f, 0.1319f, -0.9f, 0.0f, 0.0f, 0.0f,
         0.3994f, 0.0212f, -0.9f, 0.0f, 0.0f, 0.0f,
 
-        0.3994f, 0.0212f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
-        0.4f, 0.0f, -0.9f, 0.0f, 0.0f, 0.0f,
+        // Triangle 24
+        0.3994f, 0.0212f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
+        0.4f, 0.0f, -0.9f, 1.0f, 1.0f, 1.0f,
 
         ////////////////////////////////////lastik//////
         0.4f, 0.0f, -0.7f, 0.0f, 0.0f, 0.0f,
@@ -971,6 +1013,10 @@ void QOpenGLPanel::initializeGL()
         0.3994f, 0.0212f, -0.7f, 0.0f, 0.0f, 0.0f,
         0.4f, 0.0f, -0.7f, 0.0f, 0.0f, 0.0f,
         0.3994f, 0.0212f, -0.9f, 0.0f, 0.0f, 0.0f,
+
+    };
+    //Bu ön teker vertexleri iptal edildi merkez noktaları hatalı olduğu için teker dönmesi konusunda sıkıntı çıktı farklı yöntemlerle çözüldü.
+    /*float vertAndColor2[10024] = {
 
         //////////////////////ön tekerler///////////////////////
 
@@ -1678,15 +1724,26 @@ void QOpenGLPanel::initializeGL()
         -1.6000f, 0.0f, -0.7f, 0.0f, 0.0f, 0.0f,
         -1.6006f, 0.0212f, -0.9f, 0.0f, 0.0f, 0.0f,
 
+    };*/
 
 
 
-
-
-    };
-
-
+    f->glBindBuffer(GL_ARRAY_BUFFER, triangleData[0]);
     f->glBufferData(GL_ARRAY_BUFFER, sizeof(vertAndColors), vertAndColors, GL_STATIC_DRAW);
+
+
+
+    position = f->glGetAttribLocation(progID, "position");
+    f->glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)0);
+    f->glEnableVertexAttribArray(position);
+
+    color = f->glGetAttribLocation(progID, "color");
+    f->glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3));
+    f->glEnableVertexAttribArray(color);
+
+    ef->glBindVertexArray(arrays[1]);
+    f->glBindBuffer(GL_ARRAY_BUFFER, triangleData[1]);
+    f->glBufferData(GL_ARRAY_BUFFER, sizeof(vertAndColor), vertAndColor, GL_STATIC_DRAW);
 
 
     position = f->glGetAttribLocation(progID, "position");
@@ -1753,7 +1810,55 @@ void QOpenGLPanel::paintGL()
     f->glUniformMatrix4fv(cameraMatrixID,1,GL_FALSE,cameraMatrix.constData());
     f->glUniformMatrix4fv(projectionMatrixID,1,GL_FALSE,projectionMatrix.constData());
 
-    ef->glBindVertexArray(arrays);
+
+
+    ef->glBindVertexArray(arrays[1]);
+    f->glDrawArrays(GL_TRIANGLES, 0, 10028);
+
+
+
+
+    wheelCarAngle += 0.09f;
+    wheelAngle += 1.0f; // Teker kendi ekseni etrafında dönüşü
+
+    //Tekerin yörünge matrisini günceller
+    wheelTranslateMatrix.setToIdentity();
+    wheelTranslateMatrix.rotate(wheelCarAngle, 0.0f, 1.0f, 0.0f);
+    wheelTranslateMatrix.translate(0.2f, 0.0f, 0.0f);
+    // Teker kendi ekseni etrafında dönüş matrisini günceller
+    wheel.setToIdentity();
+    wheel.rotate(wheelAngle, 0.0f, 0.0f, 1.0f); // Kendi etradında z ekseninde döndür
+
+
+    //Tekerin model matrisini oluşturun ve çiziliyor
+    QMatrix4x4 wheelModel = wheelTranslateMatrix * wheel;
+    f->glUniformMatrix4fv(rotateMatrixID, 1, GL_FALSE, wheelModel.constData());
+
+    ef->glBindVertexArray(arrays[0]);
+    f->glDrawArrays(GL_TRIANGLES, 0, 10028);
+
+
+
+
+
+    wheelCarAngle2 += 0.09f;
+    wheelAngle2 += 1.0f; // tekerin kendi ekseni etrafında dönüşü
+
+    //Tekerin yörünge matrisini günceller
+    wheelTranslateMatrix2.setToIdentity();
+    wheelTranslateMatrix2.rotate(wheelCarAngle2, 0.0f, 1.0f, 0.0f);
+    wheelTranslateMatrix2.translate(-0.9f, 0.0f, 0.0f);
+
+    // Tekerin kendi ekseni etrafında dönüş matrisini günceller
+    wheel2.setToIdentity();
+    wheel2.rotate(wheelAngle2, 0.0f, 0.0f, 1.0f); // Kendi etradında z ekseninde döndür
+
+
+    //Tekerin model matrisini oluşturun ve çiziliyor
+    QMatrix4x4 wheelModel2 = wheelTranslateMatrix2 * wheel2;
+    f->glUniformMatrix4fv(rotateMatrixID, 1, GL_FALSE, wheelModel2.constData());
+
+    ef->glBindVertexArray(arrays[0]);
     f->glDrawArrays(GL_TRIANGLES, 0, 10028);
 
     update();

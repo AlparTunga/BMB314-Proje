@@ -51,19 +51,27 @@ private:
     GLuint progID;
     GLuint vertID;
     GLuint fragID;
-    GLuint arrays;
-    GLuint triangleData;
+    GLuint arrays[3];
+    GLuint triangleData[3];
     GLuint position;
     GLuint color;
     GLuint translateMatrixID;
     GLuint rotateMatrixID;
+
     GLuint scaleMatrixID;
     GLuint reflectMatrixID;
-
+    QMatrix4x4 wheelTranslateMatrix2;
+    QMatrix4x4 wheelTranslateMatrix;
     QMatrix4x4 translateMatrix;
     QMatrix4x4 rotateMatrix;
     QMatrix4x4 scaleMatrix;
     QMatrix4x4 reflectMatrix;
+    GLfloat wheelAngle;
+    GLfloat wheelCarAngle;
+    GLfloat wheelCarAngle2;
+    QMatrix4x4 wheel;
+    GLfloat wheelAngle2;
+    QMatrix4x4 wheel2;
 
     float tX, tY, tZ;
     float rX, rY, rZ;
